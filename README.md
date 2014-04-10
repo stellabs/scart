@@ -2,7 +2,7 @@ Notice
 ------
 
 All information and materials in this publication are provided by Stellabs and
-contributors Òas isÓ and any express or implied warranties (including, but not
+contributors "as is" and any express or implied warranties (including, but not
 limited to, the implied warranties of merchantability and fitness for a
 particular purpose) are disclaimed. In no event shall Stellabs or contributors
 be liable for any direct, indirect, incidental, special, exemplary, or
@@ -23,7 +23,7 @@ debugging information.
 Keeping the impact on readability _to a minimum_, Scart allows developers to
 **insert traces** in the source code _without bloating_ the final binaries.
 
-_The syntax is being defined, and the documentation is a work in progress._  
+_The syntax is being defined, and the documentation is a work in progress._
 _But an early implementation was used to fix challenging bugs in a real-life_
 _application. That was the motivation for kicking off Scart as a new project._
 
@@ -85,7 +85,7 @@ proceed with either options that follow.
    with the applicable arguments
   
 
-* Using the extra template 
+* Using the extra template  
   A basic project template is available in `sbt/template/inline`.
  - copy the entire contents of the `inline` folder at your favorite place  
  - for a new project, use the source template `killerapp/src/KillerApp.scala`  
@@ -153,7 +153,7 @@ No binary bloat!
 > 
 > Should that be necessary, the presence (or absence) of traces in the bytecode
 > can be verified with _e.g._ the  command:  
-> `javap -c -private -classpath <dirs-and-jars> <class-qualified-basename>`
+> `javap -c -private -classpath <dirs-and-jars> <class-qualified-basename>`  
 > By so doing, the content of dumped JVM instructions from classes is expected
 > to be far more lightweight when the traces are disabled (as though there were
 > no traces in the source code at all, with the exceptions already mentioned).  
@@ -165,8 +165,8 @@ No binary bloat!
 > In comparison, most logging tools leave the same bytecode regardless of the
 > actual settings. That is normal since they serve a different purpose:
 > providing information even after deployment. Conversely, Scart is meant to
-> help developers fixing bugs in the code; depending on the settings the amount
-> of debug info can be huge and not proper to emit during operations.
+> help developers fixing bugs in the code; depending on the settings, the
+> amount of debug info can be huge and not proper to emit during operations.
 
 ------------------------------------------------------------------------------
 
