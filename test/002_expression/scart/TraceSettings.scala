@@ -38,6 +38,5 @@ final object Settings extends SettingsByDefault
   override val relativizer = {
     new java.io.File(System.getProperty("user.dir") + "/../../../test/002_expression")
   }.getCanonicalPath
- 
 }
 

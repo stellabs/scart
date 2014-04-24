@@ -90,8 +90,8 @@ object Main extends App{
   val val_oi2 =                         "val_oi2-outer".e_++:
   {                                     "val_oi2-inner".e_++:
     {                                   
-      f(val_oi1)                        e_++:     "val_oi2-innermost"
-    } + 1                               ;|++: $$  s"adding 1 to f(arg)\nwhere arg:${val_oi1.$rt} = ${val_oi1}"
+      f(val_oi1)                        e_++:  "val_oi2-innermost"
+    } + 1                               e_++:  s"adding 1 to f(arg)\nwhere arg:${val_oi1.$rt} = ${val_oi1}\n"
   }
 
   println( "------- types --------" )  

@@ -41,12 +41,12 @@ package tracing{
   final object SettingsBase{
   
     // Values for main switch
-    val `ON`  = true;
-    val `OFF` = false;
+    val `ON`  = true
+    val `OFF` = false
 
     // Priority levels, thresholds
-    val HIGHEST_PRIORITY = 1;
-    val LEAST_PRIORITY   = Int.MaxValue;
+    val HIGHEST_PRIORITY = 1
+    val LEAST_PRIORITY   = Int.MaxValue
     
     // Type for the format methods
     type FormatterType = TraceData => String
@@ -65,7 +65,7 @@ package tracing{
     protected[this] def priority:Int    // If traces enabled, designate the priority threshold of handled traces
 
 	  // Format method of choice
-	  def formatter: FormatterType;
+	  def formatter: FormatterType
 	  
 	  // Low-level printing method of choice
 	  def printer: PrinterType
@@ -76,7 +76,7 @@ package tracing{
 	  def enter   :FormatLinerType             // when entering the evaluation of an expression 
     def exit    :FormatLinerType             // when exiting, ditto (it's guaranteed it'll be invoked after an 'enter')
     def bexViewer(entry:String):$BEXViewer   // viewers for an expression
- 	  val escape:String                        // escape-sequence string that's replaced with the entry before printing
+ 	 val escape:String                        // escape-sequence string that's replaced with the entry before printing
 
 
 	  // The ultimate decision that allows or forbids the trace
@@ -89,7 +89,7 @@ package tracing{
 	                                  
 	
   trait SettingsByDefault extends SettingsBase{
-	  import SettingsBase._
+    import SettingsBase._
     
     // By default, the decision to trace or not just depends on the switch 
     def doIt = trace    // A finer-grained control may be reached by overriding it
@@ -198,7 +198,7 @@ package object tracing {
   import scala.language.implicitConversions
 
   // Either the beginning, the end, or the thrown exception of an expression's evaluation
-  sealed abstract class $BeginEndExcept[+B,+E,+X];
+  sealed abstract class $BeginEndExcept[+B,+E,+X]
   final case class $B[+B,+E,+X](v:B) extends $BeginEndExcept[B,E,X]
   final case class $E[+B,+E,+X](v:E) extends $BeginEndExcept[B,E,X]
   final case class $X[+B,+E,+X](v:X) extends $BeginEndExcept[B,E,X]
@@ -305,7 +305,7 @@ package object tracing {
       // Used tuple parens to construct the pair
       case Apply(_:TypeApply, List(Literal(Constant(v)), _))                                  => v.asInstanceOf[T1]
       // In the event that the compiler yields another kind of AST: evaluate; however that raises a warning message
-      case pvt => try{ c.eval(c.Expr[Tuple2[T1,T2]](c.resetAllAttrs(pvt.duplicate)))._1
+      case pvt => try{ c.eval(c.Expr[Tuple2[T1,T2]](c.resetLocalAttrs(pvt.duplicate)))._1
                   } catch{ case _:java.lang.Throwable => !!!.nonLiteralValue }
     }
     // If the pair's 1st element is a Int, handle as the trace priority; if it's a Boolean, as a local trace switch.
@@ -324,7 +324,7 @@ package object tracing {
       case (definitions.BooleanTpe, fromTpe) if fromTpe =:= StringTpe =>  val cond = value[Boolean,String]
         if (cond) %._newETFromStringPair(c)(_pair.asInstanceOf[c.Expr[Tuple2[Boolean,String]]])
         else reify{ $ET.NoExprTracer }
-      case _                                    =>  !!!.invalidPair                                
+      case _                                                          =>  !!!.invalidPair                                
     }
   } else c.universe.reify{ $ET.NoExprTracer }    
 
@@ -345,7 +345,7 @@ package object tracing {
     }
   
     // A "do-nothing" entry-point
-    final object NoLineTracer extends Base;
+    final object NoLineTracer extends Base
   
     // A trace entry-point that traces, or not, depending on the settings
     final object LineTracer extends Base{
@@ -478,11 +478,11 @@ package object tracing {
 
     
     def doItUponPriority(c:Context)(_priority:c.Expr[Int]):Boolean = { import c.universe._
-  		_priority.tree match{
-  		  case Literal(Constant(prio:Int)) => ?.doIt && ?.priority >= prio // the boolean result
-  		  case _ => !!!.nonLiteralPriority(c)
-  		}
-  	}	
+      _priority.tree match{
+        case Literal(Constant(prio:Int))  => ?.doIt && ?.priority >= prio // the boolean result
+        case _                            => !!!.nonLiteralPriority(c)
+      }
+    }	
  
   } //ExpressionUtil
 
@@ -494,16 +494,16 @@ package object tracing {
   // Taxonomy of the current method, class, as specific as possible
   object InclosureKind extends Enumeration { val UNKNOWN, CLASS, METHOD = Value }
   case class Inclosure(kind:InclosureKind.Value, id:String){
-    def this(v:Int,s:String) = this( InclosureKind(v), s );
+    def this(v:Int,s:String) = this( InclosureKind(v), s )
   }
   
   // Location in the source code
   case class Location(source:String, val line:Int, val column:Int){
-    def this(t:(String,Int,Int)) = this( if(null==t) null else t._1, if(null==t) 0 else t._2, if(null==t) 0 else t._3 );
+    def this(t:(String,Int,Int)) = this( if(null==t) null else t._1, if(null==t) 0 else t._2, if(null==t) 0 else t._3 )
   }
   
   // Combination of the above, with the trace's entry string
-  case class TraceData(entry:String, member:Inclosure, loc:Location);
+  case class TraceData(entry:String, member:Inclosure, loc:Location)
 
   
   /*
@@ -511,7 +511,7 @@ package object tracing {
    */
 
   // Determine the position in the source code: Filename, Line, Column
-  def $currentPosition:(String,Int,Int) = macro `currentPosition:(String,Int,Int)`;
+  def $currentPosition:(String,Int,Int) = macro `currentPosition:(String,Int,Int)`
   def `currentPosition:(String,Int,Int)` (c:Context):c.Expr[(String,Int,Int)]={ import c.universe._; implicit val k = c
     currentPosition match {
       case (path, line, column) => val (_path, _line, _column) = (c.literal(path), c.literal(line), c.literal(column))
@@ -531,16 +531,16 @@ package object tracing {
 
   
   // Determine the location in the source code (similar to position): Filename, Line, Column
-  def $currentLocation:tracing.Location = macro `currentLocation:Location`;
+  def $currentLocation:tracing.Location = macro `currentLocation:Location`
   def `currentLocation:Location` (c:Context):c.Expr[tracing.Location]= c.universe.reify{
     new Location( `currentPosition:(String,Int,Int)`(c).splice )
   }
   
-  private def currentLocation(implicit k:Context) = new Location(currentPosition);
+  private def currentLocation(implicit k:Context) = new Location(currentPosition)
 
 
   // Identify the class or method to which the source code being executed belongs
-  def $currentInclosure:tracing.Inclosure = macro `currentInclosure:Inclosure`;
+  def $currentInclosure:tracing.Inclosure = macro `currentInclosure:Inclosure`
   def `currentInclosure:Inclosure` (c:Context):c.Expr[tracing.Inclosure]= {
     val Inclosure(kind, id) = currentInclosure(c)
     c.universe.reify{ new Inclosure( c.literal(kind.id).splice, c.literal(id).splice ) }
@@ -558,15 +558,15 @@ package object tracing {
    */
   
   // Not as flexible as reflection, but many times faster when that is applicable: class name     
-  def $currentClassName:String = macro `currentClassName:String`;
+  def $currentClassName:String = macro `currentClassName:String`
   def `currentClassName:String` (c:Context):c.Expr[String]={
-    import c.universe._;
+    import c.universe._
     c.Expr(Literal(Constant(c.enclosingClass.symbol.fullName)))
   }
 
   // Not as flexible as reflection, but many times faster when that is applicable: method name
   // Limitation: it doesn't give an outer method's inner method name
-  def $currentMethodName:String = macro `currentMethodName:String`;
+  def $currentMethodName:String = macro `currentMethodName:String`
   def `currentMethodName:String` (c:Context):c.Expr[String]= c.literal( c.enclosingMethod.symbol.fullName )
 
   
@@ -577,7 +577,7 @@ package object tracing {
   // Abort macro evaluation and provide details the cause
   final object Abort{
     def apply(desc:String, hint:String = null)(implicit k:Context) =
-      k.abort(k.enclosingPosition, "Trace Macro Error: " + (if (null==hint) desc else s"${desc} (${hint})"));
+      k.abort(k.enclosingPosition, "Trace Macro Error: " + (if (null==hint) desc else s"${desc} (${hint})"))
     def nonLiteralEntry(implicit k:Context) =
       apply("invalid Entry", "possible cause: mistakenly using a non-literal String")
     def nonLiteralCondition(implicit k:Context) =
@@ -588,7 +588,6 @@ package object tracing {
       apply ("invalid Priority", "possible cause: mistakenly using a non-literal AnyVal")
     def invalidPair(implicit k:Context) = 
       apply ("invalid Pair", "possible cause: mistakenly using wrong combination of types or elements")
-
   }
 
 

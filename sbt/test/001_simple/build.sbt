@@ -40,12 +40,12 @@ lazy val SLDoubletSrcRoot   = ("test/001_simple/scart", "test/001_simple/my")
 lazy val SLScartTargetRoot  = "sbt/scart.target"
 
 // Scart core library used by the build: organization, tool-name, tool-version, flavor
-lazy val SLScartDependSetup = ("Stellabs", "Scart", "0.02.000", "Vanilla")
+lazy val SLScartDependSetup = ("Stellabs", "Scart", "0.02.001", "Vanilla")
 
  // Target root, prefix, suffix
 lazy val SLTestTargetSetup  = ("sbt", "test__", ".target")
 
-lazy val SLScalaVersion     = "2.10.4"
+lazy val SLScalaVersion     = "2.11.0"
 
 
 // |PROJECT|

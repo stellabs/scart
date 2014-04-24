@@ -26,13 +26,15 @@ import org.stellabs.scart.tracing._
 
 object MyApp extends App{
 
-  def computed_string = "computed string";
+  def computed_string = "computed string"
+  
+  private final val cond = false
 
   |++: $() // A trace that collects information, doesn't accept a string
   |++: $_ "Trace that may show only a literal string"
   |++: $$ s"Trace that may show a ${computed_string}"
   |++: %5 $$ "Trace that may show if the settings priority number is >= 5"
-  |++: %false $$ "Trace that won't show because the literal condition is false"
+  |++: %cond $$ "Trace that won't show because the literal condition is false"
  
   println("Hello, world!")
 

@@ -33,9 +33,9 @@
  // Relative path from <project-home> to this file
 lazy val SLFromHomeToHere   = "sbt/scart/build.sbt"
 
-lazy val SLThisProjectSetup = ("Stellabs", "Scart", "0.02.000", "Vanilla")
+lazy val SLThisProjectSetup = ("Stellabs", "Scart", "0.02.001", "Vanilla")
 
-lazy val SLScalaVersion     = "2.10.4"
+lazy val SLScalaVersion     = "2.11.0"
 
 // Inter-dependent sources can't be scattered in unrelated dirs when SBT is used; so they've moved under the same root
 lazy val SLCommonSrcRoot    = "compile"                 // From <project-home>
@@ -103,10 +103,10 @@ scalaSource in Compile <<= baseDirectory { _ / SLCommonSrcRoot }
 // Therefore testing is more manageable with independent build files, one per (Test-Suite, Scart-Settings-object) pair. 
 sourceGenerators in Test += task {
     System.err.println("""
-    *** BE WARNED that NO TESTS ARE DONE HERE!!!                ***
-    *** In order to proceed with testing, instead:              ***
-    *** - first, produce a Scart Jar with `sbt compile:package` ***
-    *** - then, use the builds: "sbt/test/**/build.sbt"         ***
+    *** BE WARNED that NO TESTS ARE DONE HERE!!!             ***
+    *** In order to proceed with testing, instead:           ***
+    *** - first, produce a Scart Jar with `sbt publishLocal` ***
+    *** - then, use the builds: "sbt/test/**/build.sbt"      ***
     """)
     Nil:Seq[File]
 }

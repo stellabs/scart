@@ -1,5 +1,5 @@
-Notice
-------
+Disclaimer
+----------
 
 All information and materials in this publication are provided by Stellabs and
 contributors "as is" and any express or implied warranties (including, but not
@@ -17,15 +17,15 @@ possibility of such damage.
 #                  	   [BlueStraggler] Scart 
 *******************************************************************************
 
-**[SCART]** is a **_lightweight tracing tool for Scala_**  that generates
-textual debugging information.
+**[SCART]** is a **_lightweight tracing tool for Scala_** (2.10 & 2.11) that
+generates textual debugging information.
 
 Keeping the impact on readability _to a minimum_, Scart allows developers to
 **insert [traces]** in the source code **without bloating** the deliverables.
 
 _The syntax is being defined, and the documentation is a work in progress._
 _But an early implementation had been made to identify challenging bugs in a_
-_real-life application. It successfully helped pinpoint the issues, thus fix_
+_real-life application. It successfully helped pinpoint the issues, hence fix_
 _the code, and gave us the motivation to kick off a cleaner implementation_
 _as an open-source project_.
 
@@ -37,7 +37,8 @@ Getting started
 ---------------
 
 ### Prerequisites
-Scart operates with Scala 2.10.x.
+Scart now operates with either Scala 2.10.x or 2.11.0  
+_(required version to be specified in `build.sbt`)_
 
 * SBT 0.13.0 (it will download the Scala compiler automatically if necessary)
 * Mercurial or Git (only in order to clone the repository)
@@ -49,7 +50,8 @@ Scart operates with Scala 2.10.x.
 * v0.02.000
  - Instructions to build/test/run Scart _without_ SBT are _no longer_ provided
  - Replica on GitHub: https://github.com/stellabs/scart
-* ongoing (todo)
+* v0.02.001
+  - Improvement of this outline documentation
   - Support of Scala 2.11.0
 
 
@@ -61,7 +63,6 @@ In the case of a _public_ repository, follow the hosting service's instructions.
 This describes how to build and test from the command-line using SBT.
 
 #### Scart Core
-
 To compile, create and publish a Jar on your system, do as follows in
 the `sbt/scart` directory:
 
@@ -69,7 +70,6 @@ the `sbt/scart` directory:
 * execute `sbt publishLocal`  
  
 #### Testing the build
-
 The current tests require human verification, as opposed to automated tests.
 In the `sbt/test/*` directories:
 
@@ -105,9 +105,9 @@ where:
 * _Literal_ means something which is recognized as such by the compiler
   _i.e._ most identifiers aren't literals, but a macro could yield one
 
-`|++:` displays the string in a trace with more useful information, when it
-gets evaluated, and returns the `Unit` value `()` (unless an exception occurs
-in the interpolated string).
+`|++:` is *not* an operator and should be used as a statement. It displays the
+string in a trace with useful information, when it gets evaluated, and returns
+the `Unit` value `()` (unless an exception occurs in the interpolated string).
 
 In an attempt to improve the legibility of the original source code, a possible
 style is to align the LT with the ET, on the same column on the right side.
@@ -163,10 +163,10 @@ only, for instance to remove a noisy trace, that is convenient sometimes:
 
 ### Trace settings
 
-The Scart JAR doesn't include default settings, on purpose, to avoid mistakes
-such as the delivery to a customer of an application that contains traces.
-Instead, the control is left to the developers and/or people responsible of
-the build. Therefore, the Settings have to be provided or Scart won't work
+The Scart JAR **doesn't include default settings**, on purpose, to avoid
+mistakes such as the delivery to a customer of an application that contains
+traces. Instead, the control is left to the developers and/or people responsible
+of the build. Therefore, the Settings have to be provided or Scart won't work
 and build errors will appear.
 
 _For instance_, a source code file that designates the settings could have the
@@ -186,20 +186,55 @@ following content:
       val printer          = Printer         `System.err.println`
     }
     
+where:
+
+* `trace` is the main switch for enabling (`ON`) or disabling (`OFF`) tracing
+* `priority` is a `Int` of value 0 (highest) or more. If a tracer has a
+  priority, its trace will be output only if its value is equal or less than
+  the value of this settings priority. Tracers without priorities always emit
+  unless, of course, the switch is `OFF`.
+* `formatter` designates under which format each trace will be emitted:
+ - `as-is`: only the entry string/identifier
+ - `all-first`: the entry is followed by its source file name, line#, column#,
+    class or method name
+ - `all-last`: the entry is preceded with its source file name, line#, column#,
+    class or method name
+ - `inclosure-only`: the entry is _not_ emitted, only the class or method name
+   is (useful for example to identify endless loops without all the clutter)
+* `printer`: is the `String => Unit` function that actually outputs the traces.
+  Developers may provide their own function, but there are predefined printers:
+  - `System.out.println` uses its synonymic method
+  - `System.err.println` uses its synonymic method
+
+> **NOTES**
+>
+> * the highest priority applicable in tracers must be 1 (one), as opposed to
+>   the Settings object's 0 (zero)
+>
+> * For demonstration purposes, in this document, traces are printed via
+>   `System.err.println`. However, the Setting's `printer` could use a Logger,
+>   for instance by the definition of something _like_:
+>
+>         val printer = {s:String => getLogger(...).trace(..., s)}
+>
+>   provided that the `getLogger` method (or function) and its arguments are
+>   defined _before_ the project's compilation (as it is required in the case
+>   of macros).
+
 The `Settings` object must be compiled ahead-of-time:
 
 * the Scart JAR contains macros; the compiler invokes them when they are used
 in a project's source code
 * the settings designate how the Scart macros behave if invoked; in the example
-above, traces of priority 6 or more won't be generated at all (bytecode level)
-even if they exist in the source code
+above, traces of priority 6 or more won't be generated at all (nothing at the
+bytecode level) even if they exist in the source code
 
 ------------------------------------------------------------------------------
 
 Output
 ------
 
-Considering the following source code as an example:
+Given the following source code, as a tiny example:
 
     package com.example
     
@@ -237,24 +272,19 @@ Finally, all tracers can be inhibited by switching them off in the Settings,
 
     Hello, World! (a b c)
 
-For the purpose of this demonstration, traces have been printed via
-`System.err.println`, however, the Setting's `printer` can accept any
-`String => Unit` function, _e.g._ `{s:String => getLogger(...).trace(..., s)}`
-provided that the `getLogger` method (or function) is defined _before_ the
-project's compilation (as it is required in the case of macros).
-
+------------------------------------------------------------------------------
 
 Features & How-tos
 ------------------
 
 There are many more features than illustrated above, but a proper documentation
-remains to be done. For the time being, it's possible to proceed with either
-options that follow.
+remains to be done. For the time being, it's possible to proceed with the options
+that follow.
 
-* Using the tests as models  
+* Using the tests as models _(recommended)_
   Although they have exhaustive contents (therefore _not_ good examples of
-  readability), the current tests basically _are_ applications that use Scart to
-  emit traces. Thus it's possible to read them to understand how to combine
+  readability), the current tests basically _are_ applications that use Scart
+  to emit traces. Thus it's possible to read them to understand how to combine
   the Scart JAR and its settings with a given application, in order to emit
   debug traces:
  - designate settings based on `test/**/scart/TraceSettings.scala`  
@@ -264,19 +294,20 @@ options that follow.
  - in the directory that contains the application's `build.sbt`, run `sbt`
    with the applicable arguments
   
-
-* Using the extra template  
-  A basic project template is available in `sbt/template/inline`.
+* Using the extra template _(quick and easy)_
+  A basic project template is available in `sbt/template/inline`. Developers
+  without prior exposure to SBT from the command-line might prefer to start
+  with this solution.
  - copy the entire contents of the `inline` folder at your favorite place  
  - for a new project, use the source template `killerapp/src/KillerApp.scala`  
  - add traces in your source files
  - update `build.sbt` with the data of your project (_e.g._ paths and names)  
  - also designate your settings in `build.sbt`, the source file will be
    generated
- - from the command line, do: `sbt run` or `sbt "run <arguments>"`, that builds
-   and executes the application  
+ - from the command line, do: `sbt run` or `sbt "run <arguments>"`, that
+   builds and executes the application  
 
-  For more, please follow the instructions written in `build.sbt`.
+  For more, follow the instructions written in the respective `build.sbt`.
 
 > **IMPORTANT CONSIDERATIONS**  
 > 
@@ -313,6 +344,29 @@ options that follow.
 > => that's because the behavior will be altered when traces are enabled
 > (and only when enabled, in both these cases).  
 
+
+### Using Scart within an IDE
+
+As with [Scala macros], **each project** that makes use of Scart should depend
+on a separate _"Settings project"_ that defines the Scart Settings object:
+
+* the user project must have a dependency on the Settings project
+ - optionally depend on the Scart JAR, that varies with the configuration below
+* the Settings project must either:
+ - depend on the Scart JAR
+ - contain the Scart Core source(s) (but exclude the Scart stub(s), tests etc.)
+ 
+> **NOTES**
+>
+> * if Scart was built using `sbt publishLocal`, its JAR should exist somewhere
+>   under the developer's home directory.
+> * the Scart core source code is under `compile/main/src/` in this repository.
+> * when the Settings project change, it should be rebuilt, then the user
+>   project should be cleaned and rebuilt. Whether that happens automatically
+>   or not might vary with the IDE.
+> * Scart Core, Scart Settings and User Project should be all compiled using
+>   the same version of the Scala compiler
+
 ------------------------------------------------------------------------------
 
 Disabling the traces
@@ -340,29 +394,35 @@ No binary bloat!
 
 > **NOTES**
 > 
-> Should that be necessary, the presence (or absence) of traces in the bytecode
-> can be verified with _e.g._ the  command:  
-> `javap -c -private -classpath <dirs-and-jars> <class-qualified-basename>`  
-> By so doing, the content of dumped JVM instructions from classes is expected
-> to be far more lightweight when the traces are disabled (as though there were
-> no traces in the source code at all, with the exceptions already mentioned).  
-> If that's not the case, there is probably a build issue; the project must be
-> cleaned in order to remove the cached classes and rebuild it from scratch.  
-
-Conversely, since enabling traces (switch `ON`) implicitly adds calls, strings
-etc. the content can become quite heavyweight. Tracers inserted in the source
-code are similar to syntactic sugar, but they can abstract powerful features.  
+> * Conversely, since enabling traces (switch `ON`) implicitly adds calls,
+>   strings etc. the content can become quite heavyweight. Tracers inserted in
+>   the source code are similar to syntactic sugar, but they can abstract
+>   powerful features.  
+> 
+> * Should that be necessary, the presence (or absence) of traces in the
+>   bytecode can be verified with _e.g._ the  command:  
+>   `javap -c -private -classpath <dirs-and-jars> <class-qualified-basename>`  
+>   By so doing, the content of dumped JVM instructions from classes is
+>   expected to be far more lightweight when the traces are disabled (as though
+>   there were no traces in the source code at all, with the exceptions already
+>   mentioned).  
+>   If that's not the case, there is probably a build issue; the project must
+>   be cleaned in order to remove the cached classes and rebuild it from
+>   scratch.  
 
 In comparison, most logging tools leave the same bytecode regardless of the
 actual settings. That is normal since they serve a different purpose:
-providing information even after deployment. Scart, however, is meant to
-help developers fixing bugs in the code; depending on the settings, the
-amount of debug info can be huge and not proper to emit during operations.
+providing information even after deployment. Scart, however, is meant to help
+developers fixing bugs in the code; depending on the settings, the amount of
+low-level debug information can be huge thus not proper to emit during
+operations.
 
 ------------------------------------------------------------------------------
 
 [BlueStraggler]: http://blue.straggler.org
 [Scart]: https://github.com/stellabs/scart
 [traces]: http://en.wikipedia.org/wiki/Tracing_%28software%29
+[Scala macros]:
+http://docs.scala-lang.org/overviews/macros/overview.html#using_macros_with_scala_ide_or_intellij_idea
 
 Copyright 2013, 2014 Stellabs.

@@ -5,7 +5,7 @@
  * package:org.stellabs.scart.config
  * file:001_simple/scart/TraceSettings.scala
  * 
- * Copyright 2012, 2013 Stellabs.
+ * Copyright 2012-2014 Stellabs.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -55,7 +55,6 @@ final object Settings extends SettingsByDefault
   protected val trace  = `ON`
   val priority         = 5
   val formatter        = Formatter       `all-last`
-  val printer          = Printer         `System.err.println`
-  
+  val printer 	       = Printer         `System.err.println`
 }
 

@@ -45,7 +45,7 @@
 // |SETUP|
 
 // Scart trace settings: switch(ON/OFF), priority-threshold, formatter-name, printer-name  
-lazy val SLScartTraceSetup  = ("ON", 6, "all-first", "System.out.println")
+lazy val SLScartTraceSetup  = ("ON", 5, "all-last", "System.err.println")
 
 // User project: organization, application-name, version-num, path-from-project-home-to-source-root(relative)
 lazy val SLThisProjectSetup = ("ACME", "TheKillerApp", "0.00.000", "sbt/template/inline/killerapp/src")
@@ -57,10 +57,10 @@ lazy val SLFromHomeToHere   = "sbt/template/inline/build.sbt" // This file
 lazy val SLThisBuildSetup   = ("sbt/template__inline", "generated", ".target")  // Can delete "**/*target" eventually
 
 // The Scala to use for all this build phases; the same environment as the one that built the Scart JAR is recommended!
-lazy val SLScalaVersion     = "2.10.4"
+lazy val SLScalaVersion     = "2.11.0"
 
 // Scart core library used by the build: organization, tool-name, tool-version, flavor
-lazy val SLScartDependSetup = ("Stellabs", "Scart", "0.02.000", "Vanilla")
+lazy val SLScartDependSetup = ("Stellabs", "Scart", "0.02.001", "Vanilla")
 
 
 // |USER|

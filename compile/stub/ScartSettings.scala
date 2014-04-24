@@ -39,8 +39,8 @@ import org.stellabs.scart.tracing.SettingsBase._
 
 final object Settings extends SettingsBase with SettingsByDefault
 {
-  protected val trace   = `OFF`
+  protected val trace		= `OFF`
   val priority          = LEAST_PRIORITY
   val formatter         = Formatter `smoker`
-  val printer           = Printer `System.err.println`
+  val printer 	        = Printer `System.err.println`
 }
