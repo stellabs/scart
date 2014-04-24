@@ -172,20 +172,22 @@ and build errors will appear.
 _For instance_, a source code file that designates the settings could have the
 following content:
 
-    package org.stellabs.scart.config
-    import org.stellabs.scart.tracing.{SettingsBase, SettingsByDefault}
+```scala
+package org.stellabs.scart.config
+import org.stellabs.scart.tracing.{SettingsBase, SettingsByDefault}
 
-    final object Settings extends SettingsByDefault
-    {
-      import language.postfixOps
-      import SettingsBase._
-    
-      protected val trace  = `ON`
-      val priority         = 5
-      val formatter        = Formatter       `all-last`
-      val printer          = Printer         `System.err.println`
-    }
-    
+final object Settings extends SettingsByDefault
+{
+  import language.postfixOps
+  import SettingsBase._
+
+  protected val trace  = `ON`
+  val priority         = 5
+  val formatter        = Formatter       `all-last`
+  val printer          = Printer         `System.err.println`
+}
+```
+
 where:
 
 * `trace` is the main switch for enabling (`ON`) or disabling (`OFF`) tracing
@@ -215,7 +217,9 @@ where:
 >   `System.err.println`. However, the Setting's `printer` could use a Logger,
 >   for instance by the definition of something _like_:
 >
->         val printer = {s:String => getLogger(...).trace(..., s)}
+>   ```scala
+>   val printer = {s:String => getLogger(...).trace(..., s)}
+>   ```
 >
 >   provided that the `getLogger` method (or function) and its arguments are
 >   defined _before_ the project's compilation (as it is required in the case
@@ -236,22 +240,26 @@ Output
 
 Given the following source code, as a tiny example:
 
-    package com.example
-    
-    import org.stellabs.scart.tracing._
-    
-    object KillerApp extends App{           ;|++: $$  "Goodbye, Underworld!"
-      val str = args.mkString(" ")          e_++: 'str  
-      println(s"Hello, World! ($str)")      e_++: 5-> "println(...)"
-    }
+```scala
+package com.example
+
+import org.stellabs.scart.tracing._
+
+object KillerApp extends App{           ;|++: $$  "Goodbye, Underworld!"
+  val str = args.mkString(" ")          e_++: 'str  
+  println(s"Hello, World! ($str)")      e_++: 5-> "println(...)"
+}
+```
 
 With the Settings set as illustrated earlier, `sbt "run a b c"` will output
 something like:
 
-    > /sandbox/killerapp/src/KillerApp.scala(L5,C44)[class com.example.KillerApp]: Goodbye, Underworld!
-    > /sandbox/killerapp/src/KillerApp.scala(L6,C44)[class com.example.KillerApp]: str="a b c"
-    Hello, World! (a b c)
-    > /sandbox/killerapp/src/KillerApp.scala(L7,C45)[class com.example.KillerApp]: println(...)=()
+```
+> /sandbox/killerapp/src/KillerApp.scala(L5,C44)[class com.example.KillerApp]: Goodbye, Underworld!
+> /sandbox/killerapp/src/KillerApp.scala(L6,C44)[class com.example.KillerApp]: str="a b c"
+Hello, World! (a b c)
+> /sandbox/killerapp/src/KillerApp.scala(L7,C45)[class com.example.KillerApp]: println(...)=()
+```
     
 where the traces, preceded with `> `, show respectively:
 
@@ -263,14 +271,18 @@ The last Expression Tracer's priority being 5 (`5-> ...`). If the Setting's
 priority is changed to 4 (`val priority = 4`) and the project cleaned, that
 trace won't show as illustrated by the new output:
 
-    > /sandbox/killerapp/src/KillerApp.scala(L5,C44)[class com.example.KillerApp]: Goodbye, Underworld!
-    > /sandbox/killerapp/src/KillerApp.scala(L6,C44)[class com.example.KillerApp]: str="a b c"
-    Hello, World! (a b c)
+```
+> /sandbox/killerapp/src/KillerApp.scala(L5,C44)[class com.example.KillerApp]: Goodbye, Underworld!
+> /sandbox/killerapp/src/KillerApp.scala(L6,C44)[class com.example.KillerApp]: str="a b c"
+Hello, World! (a b c)
+```
 
 Finally, all tracers can be inhibited by switching them off in the Settings,
 ``protected val trace  = `OFF` ``; that gives the output:
 
-    Hello, World! (a b c)
+```
+Hello, World! (a b c)
+```
 
 ------------------------------------------------------------------------------
 
