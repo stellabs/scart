@@ -294,6 +294,7 @@ remains to be done. For the time being, it's possible to proceed with the option
 that follow.
 
 * Using the tests as models _(recommended)_
+
   Although they have exhaustive contents (therefore _not_ good examples of
   readability), the current tests basically _are_ applications that use Scart
   to emit traces. Thus it's possible to read them to understand how to combine
@@ -307,6 +308,7 @@ that follow.
    with the applicable arguments
   
 * Using the extra template _(quick and easy)_
+
   A basic project template is available in `sbt/template/inline`. Developers
   without prior exposure to SBT from the command-line might prefer to start
   with this solution.
